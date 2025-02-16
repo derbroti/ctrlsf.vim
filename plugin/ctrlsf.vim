@@ -28,6 +28,8 @@ call prop_type_add('ctrlsf_line_separator', {'highlight': 'CtrlsfLineSep'})
 call prop_type_add('ctrlsf_line_match',     {'highlight': 'CtrlsfMatchLineNum'})
 call prop_type_add('ctrlsf_line_filename',  {'highlight': 'CtrlsfFilename'})
 
+let g:ctrlsf_encoding = 'utf-8'
+
 " Utils {{{1
 " s:VisualSelection() {{{
 " Thanks to xolox!
