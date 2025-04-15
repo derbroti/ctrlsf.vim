@@ -119,9 +119,15 @@ func! s:WriteParagraph(buffer, orig, modi) abort
         let ln    = start_lnum + i
 
         let line = mline.content
+<<<<<<< HEAD
         if ctrlsf#opt#GetOpt('encoding') != ''
           let line = iconv(line, 'utf-8', ctrlsf#opt#GetOpt('encoding'))
         endif
+||||||| parent of 03fe982 (Result Review:)
+        let line = iconv(line, 'utf-8', g:ctrlsf_encoding)
+=======
+        let line = iconv(line, 'utf-8', ctrlsf#opt#GetOpt('encoding'))
+>>>>>>> 03fe982 (Result Review:)
         if i < orig_count
             let a:buffer[ln-1] = line
         else
