@@ -92,7 +92,7 @@ func! s:DoSearchAsync(args) abort
     " open window and clear previous result
     call s:Open()
     call ctrlsf#win#SetModifiableByViewMode(0)
-    call ctrlsf#buf#WriteString("Searching...")
+    " call ctrlsf#buf#WriteString("Searching...")
     if g:ctrlsf_auto_focus['at'] !=# 'start'
         call ctrlsf#win#FocusCallerWindow()
     endif
@@ -129,8 +129,8 @@ func! ctrlsf#SelfCheck() abort
         return -3
     endif
 
-    if g:ctrlsf_indent < 2
-        call ctrlsf#log#Error("g:ctrlsf_indent can't be less than 2.")
+    if g:ctrlsf_indent < 0
+        call ctrlsf#log#Error("g:ctrlsf_indent can't be less than 0.")
         return -3
     endif
 endf

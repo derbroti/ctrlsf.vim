@@ -8,36 +8,35 @@
 let s:rendered_par = 0
 let s:rendered_match = 0
 let s:cur_file = ''
-let s:procbar_dots = 0
+let s:procbar_idx = 0
+"let s:procbar_spinner = ['|' , '/', '-' , '\']
+let s:procbar_spinner = ['⠋', '⠙', '⠸', '⠴', '⠦', '⠇']
 
-func! s:Summary(procbar) abort
+func! s:SummaryMatch() abort
     let files   = len(ctrlsf#db#FileResultSet())
     let matches = len(ctrlsf#db#MatchList())
-    if a:procbar == 100
-        return [printf("%s matched lines across %s files. Done!", matches, files)]
-    elseif a:procbar == 0
-        return [printf("%s matched lines across %s files.", matches, files)]
+    return printf("%s matches in %s files", matches, files)
+endf
+
+func! s:SummaryState(procbar) abort
+    if a:procbar == 100 || a:procbar == 0
+        return "Done"
     elseif a:procbar == -1
-        return [printf("%s matched lines across %s files. Cancelled.", matches, files)]
+        return "Cancelled"
     else
-        return [printf("%s matched lines across %s files. Searching%s", matches, files, repeat('.', a:procbar))]
+        return printf("Searching %s", s:procbar_spinner[a:procbar - 1])
     endif
 endf
 
-func! s:Filename(paragraph) abort
-    " empty line + filename
-    return ["", a:paragraph.filename . ":"]
-endf
 
-func! s:Ellipsis() abort
-    return [repeat(".", 4)]
+func! s:Filename(paragraph) abort
+    return fnamemodify(a:paragraph.filename, ':p:~:.')
 endf
 
 func! s:Line(line) abort
-    let out = a:line.lnum . (a:line.matched() ? ':' : '-')
-    let out .= repeat(' ', ctrlsf#view#Indent() - len(out))
-    let out .= a:line.content
-    return [out]
+    let out  = a:line.lnum
+    let out  = repeat(' ', ctrlsf#view#Indent() - len(out) - 1) . out . ' '
+    return [out, a:line.content]
 endf
 
 func! s:LineCompact(match) abort
@@ -64,7 +63,7 @@ func! ctrlsf#view#Reset() abort
     let s:rendered_par = 0
     let s:rendered_match = 0
     let s:cur_file = ''
-    let s:procbar_dots = 0
+    let s:procbar_idx = 0
 endf
 
 " Render()
@@ -98,23 +97,31 @@ func! ctrlsf#view#RenderIncr(base_vlnum) abort
     endif
 endf
 
-" RenderSummary()
+" RenderSummaryState()
 "
-" Render a summary.
+" Render the state summary.
 "
-func! ctrlsf#view#RenderSummary() abort
+func! ctrlsf#view#RenderSummaryState() abort
     if g:ctrlsf_search_mode ==# 'sync'
-        return join(s:Summary(0), "\n")
+        return s:SummaryState(0)
     else
         if ctrlsf#async#IsSearching()
-            let s:procbar_dots = s:procbar_dots % 3 + 1
-            return join(s:Summary(s:procbar_dots), "\n")
+            let s:procbar_idx = (s:procbar_idx % len(s:procbar_spinner)) + 1
+            return s:SummaryState(s:procbar_idx)
         elseif ctrlsf#async#IsCancelled()
-            return join(s:Summary(-1), "\n")
+            return s:SummaryState(-1)
         else
-            return join(s:Summary(100), "\n")
+            return s:SummaryState(100)
         endif
     endif
+endf
+
+" RenderSummaryMatch()
+"
+" Render the match summary.
+"
+func! ctrlsf#view#RenderSummaryMatch() abort
+    return s:SummaryMatch()
 endf
 
 " s:NormalViewIncr()
@@ -123,20 +130,31 @@ func! s:NormalViewIncr(base_vlnum) abort
     let resultset = ctrlsf#db#ResultSet()
     let to_render = resultset[s:rendered_par:-1]
 
-    let view = []
+    let view = [[],[]]
+    let ind  = ctrlsf#view#Indent()
 
     for par in to_render
         if s:cur_file !=# par.filename
             let s:cur_file = par.filename
-            call extend(view, s:Filename(par))
+            if a:base_vlnum > 0
+                call extend(view[0], [['~', 'ctrlsf_line_tilde']])
+                call extend(view[1], [''])
+                call extend(view[0], [['~', 'ctrlsf_line_tilde']])
+                call extend(view[1], [''])
+            endif
+            call extend(view[0], [[repeat(' ', ind - 2) . '- ', 'ctrlsf_line_filename']])
+            call extend(view[1], [s:Filename(par)])
         elseif !ctrlsf#opt#IsContextZero()
-            call extend(view, s:Ellipsis())
+            call extend(view[0], [[repeat(' ', ind - 2) . '⋮ ', 'ctrlsf_line_separator']])
+            call extend(view[1], [''])
         endif
 
         for line in par.lines
-            call extend(view, s:Line(line))
+            let l = s:Line(line)
+            call extend(view[0], [[l[0], 'ctrlsf_line' . (line.matched() ? '_match' : '_context')]])
+            call extend(view[1], [l[1]])
 
-            call line.set_vlnum(a:base_vlnum + len(view))
+            call line.set_vlnum(a:base_vlnum + len(view[1]))
 
             if line.matched()
                 call line.match.set_vpos(line.vlnum(), line.match.col + ctrlsf#view#Indent())
@@ -144,7 +162,7 @@ func! s:NormalViewIncr(base_vlnum) abort
         endfo
     endfo
 
-    let s:rendered_par = s:rendered_par + len(to_render)
+    let s:rendered_par += len(to_render)
 
     return view
 endf
@@ -177,9 +195,9 @@ endf
 " s:NormalView()
 "
 func! s:NormalView() abort
-    let summary = ctrlsf#view#RenderSummary()
-    let body = join(s:NormalViewIncr(1), "\n") " 1 stands for summary line
-    return summary . "\n" . body
+    let body = 'NOT IMPLEMENTED'
+    " join(s:NormalViewIncr(0), "\n")
+    return body
 endf
 
 " s:CompactView()

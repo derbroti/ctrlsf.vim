@@ -41,7 +41,12 @@ func! ctrlsf#buf#SetLine(buf_name, lnum, content) abort
     let modifiable_bak = getbufvar(a:buf_name, '&modifiable')
     call setbufvar(a:buf_name, '&modifiable', 1)
 
-    call s:setbufline(a:buf_name, a:lnum, a:content)
+    call s:setbufline(a:buf_name, a:lnum, a:content[1])
+    for idx in range(0, len(a:content[0]) - 1)
+        let vtxt = a:content[0][idx][0]
+        call prop_add(a:lnum + idx, 1, {'text': vtxt, 'bufnr': bufnr(a:buf_name), 'type': substitute(a:content[0][idx][1], '_\(match\|context\|filename\)', '', '')})
+        call prop_add(a:lnum + idx, 1, {'length': len(a:content[1][idx]), 'bufnr': bufnr(a:buf_name), 'type': a:content[0][idx][1]})
+    endfor
 
     call setbufvar(a:buf_name, '&modifiable', modifiable_bak)
     call setbufvar(a:buf_name, '&modified', 0)

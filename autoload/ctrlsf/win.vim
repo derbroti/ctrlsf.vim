@@ -110,26 +110,19 @@ endf
 func! ctrlsf#win#Draw() abort
     let s:drawn_lines = 0
     let content = ctrlsf#view#Render()
-    silent! undojoin | keepjumps call ctrlsf#buf#WriteString(content)
+    silent! undojoin | keepjumps call ctrlsf#buf#SetLine(s:MAIN_BUF_NAME, s:drawn_lines + 1, content)
+    " ctrlsf#buf#WriteString(content)
 endf
 
 " DrawIncr()
 "
 func! ctrlsf#win#DrawIncr() abort
-    if ctrlsf#CurrentMode() == 'normal'
-        silent! undojoin | keepjumps
-                    \ call ctrlsf#buf#SetLine(s:MAIN_BUF_NAME, 1, ctrlsf#view#RenderSummary())
-        if s:drawn_lines == 0
-            let s:drawn_lines = 1
-        endif
-    endif
-
     let new_lines = ctrlsf#view#RenderIncr(s:drawn_lines)
-    if !empty(new_lines)
+    if !empty(new_lines[1])
         silent! undojoin | keepjumps
                     \ call ctrlsf#buf#SetLine(s:MAIN_BUF_NAME, s:drawn_lines + 1, new_lines)
     endif
-    let s:drawn_lines = s:drawn_lines + len(new_lines)
+    let s:drawn_lines += len(new_lines[1])
 
     if ctrlsf#CurrentMode() == 'compact' && ctrlsf#async#IsSearchDone()
         " overwrite 'Searching...' to 'Nothing found' or 'Cancelled'

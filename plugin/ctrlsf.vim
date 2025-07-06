@@ -11,6 +11,22 @@ if exists('g:ctrlsf_loaded') && !get(g:, 'ctrlsf_debug_mode', 0)
 endif
 let g:ctrlsf_loaded = 1
 " }}}
+"
+"
+
+hi CtrlsfLineItalic   cterm=italic ctermbg=None ctermfg=245
+hi CtrlsfLineSep      cterm=bold   ctermbg=None ctermfg=238
+hi CtrlsfLineTilde    cterm=bold   ctermbg=None ctermfg=8
+hi CtrlsfMatchLineNum cterm=None   ctermbg=None ctermfg=231
+hi CtrlsfFilename     cterm=None   ctermbg=None ctermfg=10
+hi ctrlsfMatch        cterm=bold   ctermbg=None ctermfg=13
+
+call prop_type_add('ctrlsf_line',           {'highlight': 'LineNr'})
+call prop_type_add('ctrlsf_line_tilde',     {'highlight': 'CtrlsfLineTilde'})
+call prop_type_add('ctrlsf_line_context',   {'highlight': 'CtrlsfLineItalic'})
+call prop_type_add('ctrlsf_line_separator', {'highlight': 'CtrlsfLineSep'})
+call prop_type_add('ctrlsf_line_match',     {'highlight': 'CtrlsfMatchLineNum'})
+call prop_type_add('ctrlsf_line_filename',  {'highlight': 'CtrlsfFilename'})
 
 " Utils {{{1
 " s:VisualSelection() {{{

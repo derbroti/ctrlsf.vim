@@ -17,22 +17,6 @@ endif
 syntax clear
 
 if vmode ==# 'normal'
-    syntax case match
-    syntax region ctrlsfHeader keepend start=/\%1l/ end=/\%2l/
-                \ contains=ctrlsfSearching,ctrlsfSearchDone,ctrlsfSearchCancelled,
-                \ ctrlsfMatchCount,ctrlsfFileCount
-    syntax region ctrlsfFile keepend start=/^.*:$/ end=/^\s*$/ fold
-                \ contains=ctrlsfFilename,ctrlsfLnumMatch,ctrlsfLnumUnmatch,ctrlsfCuttingLine
-    syntax match ctrlsfFilename        /^.*\ze:$/              contained
-    syntax match ctrlsfLnumMatch       /^\d\+:/
-    syntax match ctrlsfLnumUnmatch     /^\d\+-/
-    syntax match ctrlsfCuttingLine     /^\.\+$/
-    syntax match ctrlsfSearching       /Searching\.\+/         contained
-    syntax match ctrlsfSearchDone      /Done!/                 contained
-    syntax match ctrlsfSearchCancelled /Cancelled./            contained
-    syntax match ctrlsfMatchCount      /\d\+\(\s*matched\)\@=/ contained
-    syntax match ctrlsfFileCount       /\d\+\(\s*files\)\@=/   contained
-    syntax sync fromstart
 else
     syntax case match
     syntax match qfLineNr    /[^|]*/  contained contains=qfError
@@ -42,18 +26,9 @@ else
 endif
 
 " highlightment group can be shared between different syntaxes
-hi def link ctrlsfFilename        Title
-hi def link ctrlsfLnumMatch       SignColumn
-hi def link ctrlsfLnumUnmatch     LineNr
-hi def link ctrlsfSelectedLine    Visual
-hi def link ctrlsfMatch           MatchParen
-hi def link ctrlsfSearching       Todo
-hi def link ctrlsfSearchDone      PreProc
-hi def link ctrlsfSearchCancelled Comment
-hi def link ctrlsfMatchCount      Number
-hi def link ctrlsfFileCount       Number
-hi def link qfFileName            Directory
-hi def link qfError               Error
+hi def link ctrlsfSelectedLine      Visual
+hi def link qfFileName              Directory
+hi def link qfError                 Error
 
 let b:current_view_mode = vmode
 let b:current_syntax = 'ctrlsf'

@@ -123,31 +123,54 @@ endf
 " Show current search pattern
 "
 func! ctrlsf#utils#SectionB()
-    return 'Pattern: ' . ctrlsf#opt#GetOpt('pattern')
+    return ctrlsf#opt#GetOpt('pattern')
 endf
 
 " SectionC()
 "
 " Show filename of which cursor is currently placed in
 "
+func! ctrlsf#utils#SectionCwd()
+    return fnamemodify(getcwd(), ':p:~')
+endf
 func! ctrlsf#utils#SectionC()
     let [file, _, _] = ctrlsf#view#Locate(line('.'))
-    return empty(file) ? '' : file
+    let cwd  = fnamemodify(getcwd(), ':p:~')
+    let path = fnamemodify(file, ':p:~')
+    return airline#parts#adjusted_path(cwd, path)
 endf
 
 " SectionX()
 "
-" Show total number of matches and current matching
+" Show state Summary
 "
 func! ctrlsf#utils#SectionX()
+    return ctrlsf#view#RenderSummaryState()
+endf
+
+" SectionY()
+"
+" Show match Summary
+"
+func! ctrlsf#utils#SectionY()
+    return ctrlsf#view#RenderSummaryMatch()
+endf
+
+" SectionZ()
+"
+" Show total number of matches and current matching
+"
+func! ctrlsf#utils#SectionZ()
     let [file, line, match] = ctrlsf#view#Locate(line('.'))
     if !empty(match)
-        let matchlist = ctrlsf#db#MatchList()
-        let total     = len(matchlist)
-        let current   = index(matchlist, match) + 1
-        return current . '/' . total
+        let matchlist      = ctrlsf#db#MatchList()
+        let g:ctrlsf_total = len(matchlist)
+        let current        = index(matchlist, match) + 1
+        return current . '/' . g:ctrlsf_total
+    elseif get(g:, 'ctrlsf_total', 0)
+        return '?/' . g:ctrlsf_total
     else
-        return ''
+        return '?/?'
     endif
 endf
 

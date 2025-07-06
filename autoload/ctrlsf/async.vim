@@ -226,11 +226,15 @@ func! s:SearchDone() abort
         endif
     endif
 
-    if !ctrlsf#async#IsCancelled()
-        call ctrlsf#log#Notice("Done!")
-    else
-        call ctrlsf#log#Notice("Cancelled.")
-    endif
+    """ if !ctrlsf#async#IsCancelled()
+    """     call ctrlsf#log#Notice("Done!")
+    """ else
+    """     call ctrlsf#log#Notice("Cancelled.")
+    """ endif
+
+    if exists("*g:CtrlSFAfterDone")
+        silent! call g:CtrlSFAfterDone()
+    end
 
     call ctrlsf#log#Debug("ParseFinish")
 endf

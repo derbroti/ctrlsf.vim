@@ -91,9 +91,9 @@ func! ctrlsf#pat#HighlightRegex(vmode) abort
 
     if a:vmode ==# 'normal'
         if magic ==# '\v'
-            let sign = '(^\d+:.*)@<='
+            let sign = '(^.*)@<='
         else
-            let sign = '\(\^\d\+:\.\*\)\@<='
+            let sign = '\(\^\.\*\)\@<='
         endif
     else
         if magic ==# '\v'
@@ -122,9 +122,9 @@ func! ctrlsf#pat#MatchPerLineRegex(vmode) abort
     let sign = ''
     if a:vmode ==# 'normal'
         if magic ==# '\v'
-            let sign = '^\d+:.{-}\zs'
+            let sign = '^.{-}\zs'
         else
-            let sign = '\^\d\+:\.\{-}\zs'
+            let sign = '\^\.\{-}\zs'
         endif
     else
         if magic ==# '\v'
