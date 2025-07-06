@@ -15,7 +15,7 @@ let g:ctrlsf_loaded = 1
 "
 
 hi CtrlsfLineItalic   cterm=italic ctermbg=None ctermfg=245
-hi CtrlsfLineSep      cterm=bold   ctermbg=None ctermfg=238
+hi CtrlsfLineSep      cterm=bold   ctermbg=None ctermfg=245
 hi CtrlsfLineTilde    cterm=bold   ctermbg=None ctermfg=8
 hi CtrlsfMatchLineNum cterm=None   ctermbg=None ctermfg=231
 hi CtrlsfFilename     cterm=None   ctermbg=None ctermfg=10
