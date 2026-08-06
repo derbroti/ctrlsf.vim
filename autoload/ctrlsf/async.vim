@@ -134,6 +134,10 @@ func! ctrlsf#async#ParseAndDrawCB(timer_id) abort
 
     let done = ctrlsf#async#IsSearchDone()
 
+    if s:start_render == 0
+        call ctrlsf#win#Clear()
+    endif
+
     call ctrlsf#db#ParseBackendResultIncr(lines, done)
     call ctrlsf#win#DrawIncr()
 

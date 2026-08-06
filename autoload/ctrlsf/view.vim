@@ -135,13 +135,14 @@ func! s:NormalViewIncr(base_vlnum) abort
 
     for par in to_render
         if s:cur_file !=# par.filename
-            let s:cur_file = par.filename
-            if a:base_vlnum > 0
-                call extend(view[0], [['~', 'ctrlsf_line_tilde']])
+            if s:cur_file !=# ''
+                call extend(view[0], [[repeat(' ', ind - 2) . '~ ', 'ctrlsf_line_tilde']])
                 call extend(view[1], [''])
-                call extend(view[0], [['~', 'ctrlsf_line_tilde']])
+                call extend(view[0], [[repeat(' ', ind - 2) . '~ ', 'ctrlsf_line_tilde']])
                 call extend(view[1], [''])
             endif
+            let s:cur_file = par.filename
+
             call extend(view[0], [[repeat(' ', ind - 2) . '- ', 'ctrlsf_line_filename']])
             call extend(view[1], [s:Filename(par)])
         elseif !ctrlsf#opt#IsContextZero()

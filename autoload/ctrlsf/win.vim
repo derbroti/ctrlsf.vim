@@ -23,6 +23,29 @@ func! ctrlsf#win#Reset() abort
     let s:drawn_lines = 0
 endf
 
+func! ctrlsf#win#Clear() abort
+    let bufnr = bufnr(s:MAIN_BUF_NAME)
+    if bufnr == -1
+        let s:drawn_lines = 0
+        return
+    endif
+
+    let modifiable_bak = getbufvar(bufnr, '&modifiable')
+    call setbufvar(bufnr, '&modifiable', 1)
+
+    let linecount = getbufinfo(bufnr)[0].linecount
+    if exists('*prop_clear') && linecount > 0
+        call prop_clear(1, linecount, {'bufnr': bufnr})
+    endif
+
+    silent! call deletebufline(bufnr, 1, '$')
+
+    call setbufvar(bufnr, '&modifiable', modifiable_bak)
+    call setbufvar(bufnr, '&modified', 0)
+
+    let s:drawn_lines = 0
+endf
+
 """""""""""""""""""""""""""""""""
 " Open & Close
 """""""""""""""""""""""""""""""""
